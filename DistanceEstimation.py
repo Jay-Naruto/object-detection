@@ -5,6 +5,7 @@ import numpy as np
 KNOWN_DISTANCE = 45 #INCHES
 PERSON_WIDTH = 16 #INCHES
 MOBILE_WIDTH = 3.0 #INCHES
+# KNIFE_WIDTH = 0.5
 
 # Object detector constant 
 CONFIDENCE_THRESHOLD = 0.4
@@ -68,6 +69,7 @@ def distance_finder(focal_length, real_object_width, width_in_frmae):
 # reading the reference image from dir 
 ref_person = cv.imread('ReferenceImages/image14.png')
 ref_mobile = cv.imread('ReferenceImages/image4.png')
+# ref_knife = cv.imread('F:\\Tsec-Sem-6\\MP\\Yolov4-Detector-and-Distance-Estimator\\ReferenceImages\\knife1.jpg')
 
 mobile_data = object_detector(ref_mobile)
 mobile_width_in_rf = mobile_data[1][1]
@@ -75,12 +77,17 @@ mobile_width_in_rf = mobile_data[1][1]
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
 
+# knife_data = object_detector(ref_knife)
+# knife_width_in_rf= knife_data[0][1]
+
 print(f"Person width in pixels : {person_width_in_rf} mobile width in pixel: {mobile_width_in_rf}")
 
 # finding focal length 
 focal_person = focal_length_finder(KNOWN_DISTANCE, PERSON_WIDTH, person_width_in_rf)
 
 focal_mobile = focal_length_finder(KNOWN_DISTANCE, MOBILE_WIDTH, mobile_width_in_rf)
+
+# focal_knife = focal_length_finder(KNOWN_DISTANCE,KNIFE_WIDTH,knife_width_in_rf)
 cap = cv.VideoCapture(0)
 while True:
     ret, frame = cap.read()
@@ -93,6 +100,9 @@ while True:
         elif d[0] =='cell phone':
             distance = distance_finder (focal_mobile, MOBILE_WIDTH, d[1])
             x, y = d[2]
+        # elif d[0] =='knife':
+        #     distance = distance_finder (focal_knife, KNIFE_WIDTH, d[1])
+        #     x, y = d[2]
         cv.rectangle(frame, (x, y-3), (x+150, y+23),BLACK,-1 )
         cv.putText(frame, f'Dis: {round(distance,2)} inch', (x+5,y+13), FONTS, 0.48, GREEN, 2)
 
